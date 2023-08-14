@@ -6,7 +6,8 @@ defineProps({
   passId: {
     type: Function,
     required: false
-  }
+  },
+  deleteId: Function
 })
 </script>
 <template>
@@ -14,7 +15,7 @@ defineProps({
     <div class="wrapper" @click="passId(id)">
       <h2 class="item__title">{{ name }}</h2>
       <p class="content__text">{{ desc }}</p>
-      <button>delete</button>
+      <button type="button" @click="deleteId(id)">delete</button>
     </div>
   </li>
 </template>

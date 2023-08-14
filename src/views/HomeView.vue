@@ -6,9 +6,10 @@ import TodoList from '../components/todos/todoList.vue'
 import { useToDoStore } from '../stores/todosStore'
 import TodoItem from '../components/todos/todoItem.vue'
 import ReviewToDo from '../components/reviewToDo.vue'
+
 const store = useToDoStore()
 
-const addTodo = ref(false)
+const createTodo = ref(false)
 const idTodo = ref(Number)
 const ReviewToDoInfo = ref(null)
 
@@ -17,7 +18,13 @@ const clickId = (id) => {
 }
 
 const hideCreateTodo = () => {
-  addTodo.value = !addTodo.value
+  createTodo.value = !createTodo.value
+}
+
+const deleteId = async (id) => {
+  if (!id) return
+
+  await store.deleteToDoAction(id)
 }
 
 watchEffect(async () => {
@@ -47,7 +54,7 @@ watch(async () => {
         <button>edit todo</button>
       </div> -->
         <div>
-          <UModal v-if="addTodo" :toggleModal="addTodo" :hideDialog="hideCreateTodo">
+          <UModal v-if="createTodo" :toggleModal="createTodo" :hideDialog="hideCreateTodo">
             <formCreateTodo :hideDialog="hideCreateTodo"
           /></UModal>
           <div class="sidebar">
@@ -58,9 +65,11 @@ watch(async () => {
                   :name="slotProps.toDo.name"
                   :desc="slotProps.toDo.desc"
                   :passId="clickId"
+                  :deleteId="deleteId"
                 />
               </template>
             </TodoList>
+
             <div class="sidebar__info">
               <ReviewToDo v-if="ReviewToDoInfo" :Review="ReviewToDoInfo" />
             </div>

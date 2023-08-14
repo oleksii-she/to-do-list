@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { allToDo, toDoId, toDoCreate, toDoIdUpdate } from '../services/services'
+import { allToDo, toDoId, toDoCreate, toDoIdUpdate, toDoIdDelete } from '../services/services'
 
 export const useToDoStore = defineStore({
   id: 'todo',
@@ -65,6 +65,20 @@ export const useToDoStore = defineStore({
         })
 
         this.toDo = updatedTodos
+        this.loading = false
+        return 'ok'
+      } catch (error) {
+        this.error = error.message
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async deleteToDoAction(id) {
+      try {
+        this.loading = true
+        const deleteTodo = await toDoIdDelete(id)
+        this.toDo = this.toDo.filter((el) => el.id !== deleteTodo.id)
         this.loading = false
         return 'ok'
       } catch (error) {
