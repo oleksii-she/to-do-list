@@ -18,9 +18,6 @@ export const toDoCreate = async (newToDo) => {
 }
 
 export const toDoIdUpdate = async (id, newToDo) => {
-  console.log('====================================')
-  console.log(newToDo, 'newToDo', id, 'id')
-  console.log('====================================')
   const res = await axiosInstance.put(`/todos/${id}`, newToDo)
 
   return res.data

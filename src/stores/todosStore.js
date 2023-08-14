@@ -57,7 +57,14 @@ export const useToDoStore = defineStore({
         this.loading = true
         const toDo = await toDoIdUpdate(id, newToDo)
 
-        this.toDo = this.toDo.filter((el) => el.id === toDo.id)
+        const updatedTodos = this.toDo.map((el) => {
+          if (el.id === toDo.id) {
+            return toDo
+          }
+          return el
+        })
+
+        this.toDo = updatedTodos
         this.loading = false
         return 'ok'
       } catch (error) {
