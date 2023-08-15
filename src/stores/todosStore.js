@@ -7,7 +7,8 @@ export const useToDoStore = defineStore({
   state: () => ({
     toDo: [],
     loading: false,
-    error: null
+    error: null,
+    createToggle: true
   }),
 
   actions: {
@@ -86,6 +87,10 @@ export const useToDoStore = defineStore({
       } finally {
         this.loading = false
       }
+    },
+
+    createToggleAction(state) {
+      this.createToggle = state
     }
   }
 })

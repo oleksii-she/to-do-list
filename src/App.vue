@@ -1,7 +1,12 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-
+import { RouterView } from 'vue-router'
 import logo from './components/logo.vue'
+import { useToDoStore } from './stores/todosStore'
+const store = useToDoStore()
+
+const onCreateTodo = () => {
+  store.createToggleAction(true)
+}
 </script>
 
 <template>
@@ -9,9 +14,14 @@ import logo from './components/logo.vue'
     <div class="container">
       <div class="wrapper">
         <logo />
-        <nav>
-          <RouterLink to="/">Home</RouterLink>
-        </nav>
+        <button
+          type="button"
+          class="btn btn-outline-primary"
+          @click="onCreateTodo"
+          :disabled="store.createToggle"
+        >
+          create ToDo
+        </button>
       </div>
     </div>
   </header>
@@ -29,5 +39,6 @@ import logo from './components/logo.vue'
 }
 .wrapper {
   display: flex;
+  justify-content: space-between;
 }
 </style>

@@ -19,7 +19,6 @@ defineProps({
   display: flex;
   flex-direction: column;
   row-gap: 20px;
-  min-width: 300px;
   overflow: scroll;
   height: calc(100vh - 100px);
 }

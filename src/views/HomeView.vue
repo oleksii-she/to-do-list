@@ -1,12 +1,10 @@
 <script setup>
 import { ref, watchEffect, reactive } from 'vue'
 
-// import formCreateTodo from '../components/formCreateTodo.vue'
 import TodoList from '../components/todos/todoList.vue'
 import { useToDoStore } from '../stores/todosStore'
 import TodoItem from '../components/todos/todoItem.vue'
 import CreateEditTodo from '../components/createEditTodo.vue'
-// import ReviewToDo from '../components/reviewToDo.vue'
 
 const store = useToDoStore()
 
@@ -17,16 +15,9 @@ const createTodoState = reactive({
 
 const ReviewToDoInfo = ref(null)
 
-const updateToDoState = reactive({
-  name: '',
-  desc: ''
-})
-
-// const createTodo = ref(false)
 const idTodo = ref(null)
 
 const clickId = (id) => {
-  console.log(id)
   idTodo.value = id
 }
 
@@ -42,15 +33,17 @@ const createToDo = async () => {
   await store.createToDoAction(createTodoState)
 }
 
-const updateToDo = async (updatingData) => {
-  if (!updatingData) {
-    return
-  }
+const changeUpdateDone = async (id, done) => {
+  await store.editToDoAction(id, { done: done })
+}
 
+const updateToDo = async (updatingData) => {
   const newToDo = {
+    done: updatingData.done,
     name: updatingData.name,
     desc: updatingData.desc
   }
+
   await store.editToDoAction(updatingData.id, newToDo)
 }
 
@@ -67,8 +60,16 @@ watchEffect(async () => {
 })
 watchEffect(async () => {
   idTodo.value
+  console.log(ReviewToDoInfo.value)
 
   await store.allToDoAction()
+})
+
+watchEffect(() => {
+  // перемикач між створенням та оновленням
+  if (ReviewToDoInfo.value) {
+    store.createToggleAction(false)
+  }
 })
 </script>
 
@@ -76,44 +77,38 @@ watchEffect(async () => {
   <main>
     <section class="home-page">
       <div class="container">
-        <!-- <div class="block-btn">
-        <button @click="addTodo = true">add todo</button>
-        <button>delete todo</button>
-        <button>create todo</button>
-        <button>edit todo</button>
-      </div> -->
         <div>
-          <!-- <UModal v-if="createTodo" :toggleModal="createTodo" :hideDialog="hideCreateTodo">
-            <formCreateTodo :hideDialog="hideCreateTodo"
-          /></UModal> -->
           <div class="sidebar">
-            <TodoList :toDos="store.toDo">
-              <template v-slot:toDo="slotProps"
-                ><TodoItem
-                  :id="slotProps.toDo.id"
-                  :name="slotProps.toDo.name"
-                  :desc="slotProps.toDo.desc"
-                  :passId="clickId"
-                  :deleteId="deleteId"
-                />
-              </template>
-            </TodoList>
+            <div class="sidebar__todo">
+              <TodoList :toDos="store.toDo">
+                <template v-slot:toDo="slotProps"
+                  ><TodoItem
+                    :id="slotProps.toDo.id"
+                    :name="slotProps.toDo.name"
+                    :desc="slotProps.toDo.desc"
+                    :done="slotProps.toDo.done"
+                    :passId="clickId"
+                    :deleteId="deleteId"
+                    :changeUpdateDone="changeUpdateDone"
+                  />
+                </template>
+              </TodoList>
+            </div>
 
             <div class="sidebar__info">
-              <!-- <ReviewToDo v-if="ReviewToDoInfo" :Review="ReviewToDoInfo" /> -->
               <CreateEditTodo
-                v-if="!ReviewToDoInfo"
+                v-if="store.createToggle"
                 :name="createTodoState.name"
                 @update:name="createTodoState.name = $event"
                 :desc="createTodoState.desc"
                 @update:desc="createTodoState.desc = $event"
-                buttonSignature="Create"
+                buttonSignature="Create ToDo"
                 :buttonEvent="createToDo"
               />
               <CreateEditTodo
                 v-else
                 :initialStateToUpdate="ReviewToDoInfo"
-                buttonSignature="Update"
+                buttonSignature="Update ToDo"
                 :buttonEvent="updateToDo"
                 :modeToggle="true"
               />
@@ -140,7 +135,9 @@ watchEffect(async () => {
 .sidebar {
   display: flex;
   column-gap: 25px;
-
+  &__todo {
+    width: 400px;
+  }
   &__info {
     width: 100%;
   }

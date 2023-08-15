@@ -1,9 +1,10 @@
 <script setup>
-import { reactive, watchEffect, ref, watch, defineEmits } from 'vue'
+import { reactive, watchEffect } from 'vue'
 
 const props = defineProps({
   name: String,
   desc: String,
+  done: Boolean,
   buttonSignature: String,
   buttonEvent: Function,
   modeToggle: {
@@ -15,15 +16,29 @@ const props = defineProps({
 
 const updateValue = reactive({
   id: '',
+  done: '',
   name: '',
   desc: ''
 })
+
+const onChange = (e) => {
+  updateValue.done = e.target.checked
+}
+
 watchEffect(() => {
   if (props.initialStateToUpdate) {
     updateValue.id = props.initialStateToUpdate.id
+    updateValue.done = props.initialStateToUpdate.done
     updateValue.name = props.initialStateToUpdate.name
     updateValue.desc = props.initialStateToUpdate.desc
   }
+})
+
+watchEffect(() => {
+  console.log(updateValue.done)
+  // if (updateValue.done !== props.initialStateToUpdate.done) {
+  //    updateValue.done =
+  // }
 })
 </script>
 
@@ -51,7 +66,22 @@ watchEffect(() => {
       class="info__description"
       v-model="updateValue.desc"
     />
-    <button type="button" @click="buttonEvent(updateValue)">{{ buttonSignature }}</button>
+    <div v-if="modeToggle" class="form-check">
+      <input
+        @change="onChange"
+        class="form-check-input"
+        type="checkbox"
+        v-model="updateValue.done"
+        id="flexCheckIndeterminate"
+      />
+      <label class="form-check-label" for="flexCheckIndeterminate"> change the task status </label>
+    </div>
+
+    <button class="btn btn-primary" type="button" @click="buttonEvent(updateValue)">
+      {{ buttonSignature }}
+    </button>
+
+    <!-- change the task status -->
   </div>
 </template>
 
