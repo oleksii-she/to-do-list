@@ -1,30 +1,57 @@
 <script setup>
-import { ref, watchEffect, watch } from 'vue'
+import { ref, watchEffect, reactive } from 'vue'
 
-import formCreateTodo from '../components/formCreateTodo.vue'
+// import formCreateTodo from '../components/formCreateTodo.vue'
 import TodoList from '../components/todos/todoList.vue'
 import { useToDoStore } from '../stores/todosStore'
 import TodoItem from '../components/todos/todoItem.vue'
-import ReviewToDo from '../components/reviewToDo.vue'
+import CreateEditTodo from '../components/createEditTodo.vue'
+// import ReviewToDo from '../components/reviewToDo.vue'
 
 const store = useToDoStore()
 
-const createTodo = ref(false)
-const idTodo = ref(Number)
+const createTodoState = reactive({
+  name: '',
+  desc: ''
+})
+
 const ReviewToDoInfo = ref(null)
 
-const clickId = (id) => {
-  idTodo.value = Number(id)
-}
+const updateToDoState = reactive({
+  name: '',
+  desc: ''
+})
 
-const hideCreateTodo = () => {
-  createTodo.value = !createTodo.value
+// const createTodo = ref(false)
+const idTodo = ref(null)
+
+const clickId = (id) => {
+  console.log(id)
+  idTodo.value = id
 }
 
 const deleteId = async (id) => {
   if (!id) return
-
   await store.deleteToDoAction(id)
+}
+
+const createToDo = async () => {
+  if (createTodoState.name === '' || createTodoState.desc === '') {
+    return console.log('All fields must be filled')
+  }
+  await store.createToDoAction(createTodoState)
+}
+
+const updateToDo = async (updatingData) => {
+  if (!updatingData) {
+    return
+  }
+
+  const newToDo = {
+    name: updatingData.name,
+    desc: updatingData.desc
+  }
+  await store.editToDoAction(updatingData.id, newToDo)
 }
 
 watchEffect(async () => {
@@ -38,7 +65,9 @@ watchEffect(async () => {
     console.log(error.message)
   }
 })
-watch(async () => {
+watchEffect(async () => {
+  idTodo.value
+
   await store.allToDoAction()
 })
 </script>
@@ -54,9 +83,9 @@ watch(async () => {
         <button>edit todo</button>
       </div> -->
         <div>
-          <UModal v-if="createTodo" :toggleModal="createTodo" :hideDialog="hideCreateTodo">
+          <!-- <UModal v-if="createTodo" :toggleModal="createTodo" :hideDialog="hideCreateTodo">
             <formCreateTodo :hideDialog="hideCreateTodo"
-          /></UModal>
+          /></UModal> -->
           <div class="sidebar">
             <TodoList :toDos="store.toDo">
               <template v-slot:toDo="slotProps"
@@ -71,7 +100,23 @@ watch(async () => {
             </TodoList>
 
             <div class="sidebar__info">
-              <ReviewToDo v-if="ReviewToDoInfo" :Review="ReviewToDoInfo" />
+              <!-- <ReviewToDo v-if="ReviewToDoInfo" :Review="ReviewToDoInfo" /> -->
+              <CreateEditTodo
+                v-if="!ReviewToDoInfo"
+                :name="createTodoState.name"
+                @update:name="createTodoState.name = $event"
+                :desc="createTodoState.desc"
+                @update:desc="createTodoState.desc = $event"
+                buttonSignature="Create"
+                :buttonEvent="createToDo"
+              />
+              <CreateEditTodo
+                v-else
+                :initialStateToUpdate="ReviewToDoInfo"
+                buttonSignature="Update"
+                :buttonEvent="updateToDo"
+                :modeToggle="true"
+              />
             </div>
           </div>
         </div>

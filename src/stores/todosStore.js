@@ -42,7 +42,7 @@ export const useToDoStore = defineStore({
         console.log(newToDo, 'newToDoStore')
         this.loading = true
         const toDo = await toDoCreate(newToDo)
-        this.toDo.push(toDo.data)
+        this.toDo.unshift(toDo)
         this.loading = false
         return 'ok'
       } catch (error) {
