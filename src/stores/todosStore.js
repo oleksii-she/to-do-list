@@ -45,7 +45,6 @@ export const useToDoStore = defineStore({
         const toDo = await toDoCreate(newToDo)
         this.toDo.unshift(toDo)
         this.loading = false
-        return 'ok'
       } catch (error) {
         this.error = error.message
       } finally {
@@ -67,7 +66,6 @@ export const useToDoStore = defineStore({
 
         this.toDo = updatedTodos
         this.loading = false
-        return 'ok'
       } catch (error) {
         this.error = error.message
       } finally {
@@ -81,7 +79,6 @@ export const useToDoStore = defineStore({
         const deleteTodo = await toDoIdDelete(id)
         this.toDo = this.toDo.filter((el) => el.id !== deleteTodo.id)
         this.loading = false
-        return 'ok'
       } catch (error) {
         this.error = error.message
       } finally {

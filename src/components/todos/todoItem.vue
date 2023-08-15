@@ -59,8 +59,6 @@ const onChange = (e) => {
     max-height: 3.6em;
     line-height: 1.8em;
   }
-  &__title {
-  }
 
   &__check-btn-box {
     float: right;

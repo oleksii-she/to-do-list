@@ -60,7 +60,6 @@ watchEffect(async () => {
 })
 watchEffect(async () => {
   idTodo.value
-  console.log(ReviewToDoInfo.value)
 
   await store.allToDoAction()
 })
@@ -96,22 +95,27 @@ watchEffect(() => {
             </div>
 
             <div class="sidebar__info">
-              <CreateEditTodo
-                v-if="store.createToggle"
-                :name="createTodoState.name"
-                @update:name="createTodoState.name = $event"
-                :desc="createTodoState.desc"
-                @update:desc="createTodoState.desc = $event"
-                buttonSignature="Create ToDo"
-                :buttonEvent="createToDo"
-              />
-              <CreateEditTodo
-                v-else
-                :initialStateToUpdate="ReviewToDoInfo"
-                buttonSignature="Update ToDo"
-                :buttonEvent="updateToDo"
-                :modeToggle="true"
-              />
+              <div v-if="store.createToggle">
+                <h2>Create ToDo</h2>
+                <CreateEditTodo
+                  :name="createTodoState.name"
+                  @update:name="createTodoState.name = $event"
+                  :desc="createTodoState.desc"
+                  @update:desc="createTodoState.desc = $event"
+                  buttonSignature="Create ToDo"
+                  :buttonEvent="createToDo"
+                />
+              </div>
+
+              <div v-else>
+                <h2>Update ToDo</h2>
+                <CreateEditTodo
+                  :initialStateToUpdate="ReviewToDoInfo"
+                  buttonSignature="Update ToDo"
+                  :buttonEvent="updateToDo"
+                  :modeToggle="true"
+                />
+              </div>
             </div>
           </div>
         </div>

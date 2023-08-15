@@ -33,13 +33,6 @@ watchEffect(() => {
     updateValue.desc = props.initialStateToUpdate.desc
   }
 })
-
-watchEffect(() => {
-  console.log(updateValue.done)
-  // if (updateValue.done !== props.initialStateToUpdate.done) {
-  //    updateValue.done =
-  // }
-})
 </script>
 
 <template lang="">
@@ -66,21 +59,24 @@ watchEffect(() => {
       class="info__description"
       v-model="updateValue.desc"
     />
-    <div v-if="modeToggle" class="form-check">
-      <input
-        @change="onChange"
-        class="form-check-input"
-        type="checkbox"
-        v-model="updateValue.done"
-        id="flexCheckIndeterminate"
-      />
-      <label class="form-check-label" for="flexCheckIndeterminate"> change the task status </label>
+    <div class="btn-box">
+      <div v-if="modeToggle" class="form-check">
+        <input
+          @change="onChange"
+          class="form-check-input"
+          type="checkbox"
+          v-model="updateValue.done"
+          id="flexCheckIndeterminate"
+        />
+        <label class="form-check-label" for="flexCheckIndeterminate">
+          change the task status
+        </label>
+      </div>
+
+      <button class="btn btn-primary" type="button" @click="buttonEvent(updateValue)">
+        {{ buttonSignature }}
+      </button>
     </div>
-
-    <button class="btn btn-primary" type="button" @click="buttonEvent(updateValue)">
-      {{ buttonSignature }}
-    </button>
-
     <!-- change the task status -->
   </div>
 </template>
@@ -90,7 +86,7 @@ watchEffect(() => {
   display: flex;
   flex-direction: column;
   row-gap: 15px;
-  height: calc(100vh - 100px);
+  height: calc(100vh - 160px);
   &__text {
     border: none;
     border-bottom: 1px solid $btnColor;
@@ -102,5 +98,11 @@ watchEffect(() => {
     resize: none;
     border-bottom: 1px solid $btnColor;
   }
+}
+.btn-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  row-gap: 15px;
 }
 </style>

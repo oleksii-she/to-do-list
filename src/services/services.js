@@ -7,8 +7,10 @@ export const allToDo = async () => {
 }
 
 export const toDoId = async (id) => {
+  if (!id) {
+    return
+  }
   const res = await axiosInstance.get(`/todos/${id}`)
-
   return res.data
 }
 
