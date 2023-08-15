@@ -1,5 +1,8 @@
 import { defineStore } from 'pinia'
 import { allToDo, toDoId, toDoCreate, toDoIdUpdate, toDoIdDelete } from '../services/services'
+import { createToaster } from '@meforma/vue-toaster'
+
+const toaster = createToaster({ position: 'top' })
 
 export const useToDoStore = defineStore({
   id: 'todo',
@@ -17,9 +20,11 @@ export const useToDoStore = defineStore({
         this.loading = true
         const toDo = await allToDo()
         this.toDo = toDo
+
         this.loading = false
       } catch (error) {
         this.error = error.message
+        toaster.error(error.message)
       } finally {
         this.loading = false
       }
@@ -27,26 +32,26 @@ export const useToDoStore = defineStore({
 
     async idToDoAction(id) {
       try {
-        this.loading = true
         const toDo = await toDoId(id)
-        this.loading = false
+
         return toDo
       } catch (error) {
         this.error = error.message
-      } finally {
-        this.loading = false
+        toaster.error(error.message)
       }
     },
 
     async createToDoAction(newToDo) {
       try {
-        console.log(newToDo, 'newToDoStore')
         this.loading = true
         const toDo = await toDoCreate(newToDo)
         this.toDo.unshift(toDo)
+        toaster.success('Added toDo')
         this.loading = false
+        return toDo
       } catch (error) {
         this.error = error.message
+        toaster.error(error.message)
       } finally {
         this.loading = false
       }
@@ -66,8 +71,10 @@ export const useToDoStore = defineStore({
 
         this.toDo = updatedTodos
         this.loading = false
+        return toDo
       } catch (error) {
         this.error = error.message
+        toaster.error(error.message)
       } finally {
         this.loading = false
       }
@@ -78,9 +85,14 @@ export const useToDoStore = defineStore({
         this.loading = true
         const deleteTodo = await toDoIdDelete(id)
         this.toDo = this.toDo.filter((el) => el.id !== deleteTodo.id)
+
+        if (deleteTodo) {
+          toaster.success('Successfully removed toDo')
+        }
         this.loading = false
       } catch (error) {
         this.error = error.message
+        toaster.error(error.message)
       } finally {
         this.loading = false
       }

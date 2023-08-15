@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, watchEffect } from 'vue'
+import { reactive, watchEffect, ref } from 'vue'
 
 const props = defineProps({
   name: String,
@@ -13,6 +13,9 @@ const props = defineProps({
   },
   initialStateToUpdate: Object
 })
+
+const disabledUpdateBtn = ref(true)
+const disabledCreateBtn = ref(true)
 
 const updateValue = reactive({
   id: '',
@@ -31,6 +34,29 @@ watchEffect(() => {
     updateValue.done = props.initialStateToUpdate.done
     updateValue.name = props.initialStateToUpdate.name
     updateValue.desc = props.initialStateToUpdate.desc
+  }
+})
+
+watchEffect(() => {
+  if (props.initialStateToUpdate) {
+    const isNameSame = updateValue.name === props.initialStateToUpdate.name
+    const isDoneSame = updateValue.done === props.initialStateToUpdate.done
+    const isDescSame = updateValue.desc === props.initialStateToUpdate.desc
+
+    disabledUpdateBtn.value = isNameSame && isDoneSame && isDescSame
+  }
+})
+
+watchEffect(() => {
+  if (props.initialStateToUpdate) {
+    return
+  }
+  const name = props.name
+  const desc = props.desc
+  if (name === '' || desc === '') {
+    disabledCreateBtn.value = true
+  } else {
+    disabledCreateBtn.value = false
   }
 })
 </script>
@@ -73,9 +99,26 @@ watchEffect(() => {
         </label>
       </div>
 
-      <button class="btn btn-primary" type="button" @click="buttonEvent(updateValue)">
+      <button
+        v-if="props.initialStateToUpdate"
+        class="btn btn-primary"
+        :disabled="disabledUpdateBtn"
+        type="button"
+        @click="buttonEvent(updateValue)"
+      >
         {{ buttonSignature }}
       </button>
+      <button
+        v-if="!props.initialStateToUpdate"
+        class="btn btn-primary"
+        :disabled="disabledCreateBtn"
+        type="button"
+        @click="buttonEvent(updateValue)"
+      >
+        {{ buttonSignature }}
+      </button>
+
+      <!-- disabledCreateBtn -->
     </div>
     <!-- change the task status -->
   </div>
@@ -104,5 +147,9 @@ watchEffect(() => {
   flex-direction: column;
   align-items: flex-end;
   row-gap: 15px;
+}
+
+.form-check-input {
+  cursor: pointer;
 }
 </style>

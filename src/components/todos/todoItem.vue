@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watchEffect } from 'vue'
 const props = defineProps({
   id: String,
   name: String,
@@ -18,6 +18,12 @@ const onChange = (e) => {
 
   props.changeUpdateDone(props.id, checkBox.value)
 }
+
+watchEffect(() => {
+  checkBox.value = props.done
+
+  console.log(props.id)
+})
 </script>
 <template>
   <li class="item">
@@ -50,7 +56,6 @@ const onChange = (e) => {
   padding: 15px;
 
   &__text {
-    /* width: 250px; */
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -60,6 +65,16 @@ const onChange = (e) => {
     line-height: 1.8em;
   }
 
+  &__title {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 3.6em;
+    line-height: 1.8em;
+    border-bottom: 1px solid #f57520;
+  }
   &__check-btn-box {
     float: right;
   }
@@ -68,12 +83,14 @@ const onChange = (e) => {
   &:hover,
   &:focus {
     color: red;
+
     cursor: pointer;
   }
 }
 .form-check-input {
   width: 2em;
   height: 2em;
+  cursor: pointer;
 }
 .form-check {
   display: flex;

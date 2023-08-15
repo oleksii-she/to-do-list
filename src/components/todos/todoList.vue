@@ -20,6 +20,6 @@ defineProps({
   flex-direction: column;
   row-gap: 20px;
   overflow: scroll;
-  height: calc(100vh - 140px);
+  height: 100%;
 }
 </style>
